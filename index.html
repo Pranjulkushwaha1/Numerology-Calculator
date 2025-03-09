@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Name Numerology Calculator</title>
+  <style>
+    /* General Styling */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      color: #333;
+      transition: background-color 0.5s;
+    }
+
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Sticky Header */
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background-color: white;
+      z-index: 10;
+      padding: 20px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .sticky-header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      color: #333;
+    }
+
+    .sticky-header input {
+      padding: 12px;
+      font-size: 1.1em;
+      margin-bottom: 20px;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      width: 80%;
+      transition: border 0.3s;
+    }
+
+    .sticky-header input:focus {
+      border-color: #4CAF50;
+    }
+
+    .sticky-header button {
+      padding: 12px 30px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.2em;
+      margin-top: 15px;
+      transition: background-color 0.3s;
+    }
+
+    .sticky-header button:hover {
+      background-color: #45a049;
+    }
+
+    #result {
+      margin-top: 25px;
+      display: none;
+      animation: fadeIn 1s ease-out;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .section {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f0f0f0;
+      border-radius: 8px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .clear-btn {
+      padding: 12px 30px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.1em;
+      margin-top: 10px;
+    }
+
+    .clear-btn:hover {
+      background-color: #e53935;
+    }
+
+    .brand-section {
+      margin-top: 30px;
+      padding: 15px;
+      background-color: #f1f1f1;
+      border-radius: 8px;
+      text-align: left;
+    }
+
+    .brand-name {
+      font-weight: bold;
+      color: #4CAF50;
+    }
+
+    .suggestion {
+      background-color: #ffeb3b;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sticky-header">
+      <h1>Business Name Numerology Calculator</h1>
+      <p>Enter your business name below to discover its numerology insights and make an informed decision!</p>
+
+      <input type="text" id="business-name" placeholder="Enter your business name" oninput="showLetterTooltip()" />
+      <button onclick="calculateNumerology()">Calculate</button>
+    </div>
+
+    <div id="result">
+      <h2>Numerology Number: <span id="numerology-number"></span></h2>
+      <p>Total Value: <span id="total-value"></span></p>
+
+      <div class="section">
+        <h3>Life Path Number</h3>
+        <p id="life-path"></p>
+      </div>
+
+      <div class="section">
+        <h3>Expression Number</h3>
+        <p id="expression-number"></p>
+      </div>
+
+      <div class="section">
+        <h3>Destiny Number</h3>
+        <p id="destiny-number"></p>
+      </div>
+
+      <div class="section">
+        <h3>Heart's Desire Number</h3>
+        <p id="hearts-desire"></p>
+      </div>
+
+      <div class="section">
+        <h3>Challenges</h3>
+        <p id="challenges"></p>
+      </div>
+
+      <!-- New Lucky Date Section -->
+      <div class="section">
+        <h3>Lucky Date</h3>
+        <p id="lucky-date"></p>
+      </div>
+
+      <!-- New Lucky Color Section -->
+      <div class="section">
+        <h3>Lucky Color</h3>
+        <p id="lucky-color"></p>
+      </div>
+
+      <div class="brand-section">
+        <h3>Trending Brands with this Numerology Number:</h3>
+        <ul id="brand-names-list"></ul>
+      </div>
+
+      <div class="suggestion">
+        <h3>Business Name Compatibility:</h3>
+        <p id="business-compatibility"></p>
+      </div>
+
+      <button class="clear-btn" onclick="clearResults()">Clear</button>
+    </div>
+  </div>
+
+  <script>
+    // Mapping letters to numbers
+    const letterToNumber = {
+      A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8, I: 9,
+      J: 1, K: 2, L: 3, M: 4, N: 5, O: 6, P: 7, Q: 8, R: 9,
+      S: 1, T: 2, U: 3, V: 4, W: 5, X: 6, Y: 7, Z: 8
+    };
+
+    // Numerology interpretations
+    const interpretations = {
+      1: {
+        lifePath: "You are a born leader with an independent spirit, full of ambition and self-reliance.",
+        expression: "You are assertive, direct, and often take the initiative in your business and life.",
+        destiny: "Your destiny is to be a trailblazer, bringing new ideas and concepts to the world.",
+        heartsDesire: "You desire independence, recognition, and to lead others towards success.",
+        challenges: "You may struggle with being overly self-centered and must learn to collaborate effectively.",
+        trendingBrands: ["Apple", "Tesla", "Nike"],
+        compatibility: "This number thrives in industries where leadership and innovation are key, such as tech, entrepreneurship, and real estate."
+      },
+      2: {
+        lifePath: "You are a peacekeeper, focused on creating balance and harmony in all areas of your life.",
+        expression: "You express yourself with empathy and diplomacy, seeking peace over conflict.",
+        destiny: "Your destiny is to foster partnerships and collaboration, building strong relationships.",
+        heartsDesire: "You desire love, harmony, and to be in a supportive and nurturing environment.",
+        challenges: "You may have a tendency to avoid conflict at all costs, sometimes to your detriment.",
+        trendingBrands: ["Facebook", "Airbnb", "Coca-Cola"],
+        compatibility: "Best suited for businesses that thrive on collaboration, social causes, and partnerships, such as wellness, hospitality, and customer service."
+      },
+      3: {
+        lifePath: "You are a natural communicator, full of creativity and charisma.",
+        expression: "Your expression is vibrant, lively, and artistic, making you a perfect fit for creative businesses.",
+        destiny: "Your destiny is to bring joy and creativity to others, inspiring them through words or art.",
+        heartsDesire: "You desire recognition for your creative talents and want to be in the spotlight.",
+        challenges: "You may struggle with focus and consistency in your projects, often bouncing from one idea to the next.",
+        trendingBrands: ["Instagram", "Spotify", "Snapchat"],
+        compatibility: "Highly suited for creative industries like entertainment, marketing, media, and arts, where expression is central."
+      },
+      // Add more numbers similarly...
+    };
+
+    function calculateNumerology() {
+      const name = document.getElementById("business-name").value.trim();
+
+      if (name === "") {
+        alert("Please enter a business name!");
+        return;
+      }
+
+      let total = 0;
+      for (let i = 0; i < name.length; i++) {
+        const letter = name[i].toUpperCase();
+        if (letterToNumber[letter]) {
+          total += letterToNumber[letter];
+        }
+      }
+
+      while (total > 9) {
+        total = total.toString().split("").reduce((acc, num) => acc + parseInt(num), 0);
+      }
+
+      // Set background color and numerology result
+      document.body.style.backgroundColor = getColorForNumber(total);
+      document.getElementById("numerology-number").textContent = total;
+      document.getElementById("total-value").textContent = total;
+
+      const result = interpretations[total];
+
+      document.getElementById("life-path").textContent = result.lifePath;
+      document.getElementById("expression-number").textContent = result.expression;
+      document.getElementById("destiny-number").textContent = result.destiny;
+      document.getElementById("hearts-desire").textContent = result.heartsDesire;
+      document.getElementById("challenges").textContent = result.challenges;
+      document.getElementById("business-compatibility").textContent = result.compatibility;
+
+      const brandList = result.trendingBrands;
+      const brandNamesList = document.getElementById("brand-names-list");
+      brandNamesList.innerHTML = "";
+      brandList.forEach(brand => {
+        const li = document.createElement("li");
+        li.textContent = brand;
+        brandNamesList.appendChild(li);
+      });
+
+      // Add Lucky Date logic
+      const luckyDate = calculateLuckyDate(total);
+      document.getElementById("lucky-date").textContent = luckyDate;
+
+      // Add Lucky Color logic
+      const luckyColor = getLuckyColor(total);
+      document.getElementById("lucky-color").textContent = luckyColor;
+
+      document.getElementById("result").style.display = "block";
+    }
+
+    function calculateLuckyDate(num) {
+      // Logic to calculate lucky date based on numerology number (just for example)
+      const month = new Date().getMonth() + 1;  // Current month
+      return `Day ${num} of Month ${month}`;
+    }
+
+    function getLuckyColor(num) {
+      const colors = {
+        1: "Gold",
+        2: "Silver",
+        3: "Yellow",
+        4: "Blue",
+        5: "Red",
+        6: "Green",
+        7: "Purple",
+        8: "Pink",
+        9: "White"
+      };
+      return colors[num] || "Gray"; // Default to Gray if no match
+    }
+
+    function getColorForNumber(num) {
+      const colors = {
+        1: "#ffeb3b",  // Yellow
+        2: "#03a9f4",  // Blue
+        3: "#8bc34a",  // Green
+        4: "#ff5722",  // Orange
+        5: "#9c27b0",  // Purple
+        6: "#ff9800",  // Amber
+        7: "#673ab7",  // Deep Purple
+        8: "#00bcd4",  // Cyan
+        9: "#e91e63",  // Pink
+      };
+      return colors[num] || "#f0f0f0"; // Default to light gray if no match
+    }
+
+    function clearResults() {
+      document.getElementById("business-name").value = "";
+      document.getElementById("numerology-number").textContent = "";
+      document.getElementById("total-value").textContent = "";
+      document.getElementById("result").style.display = "none";
+      document.body.style.backgroundColor = "#f9f9f9";
+    }
+  </script>
+</body>
+</html>
